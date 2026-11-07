@@ -1,5 +1,8 @@
 夜航卧室 / Jellyfish Bedroom
 
+在线地址：
+https://icey777756.github.io/jellyfish-bedroom/
+
 直接打开 outputs/index.html 即可运行。
 
 交互：

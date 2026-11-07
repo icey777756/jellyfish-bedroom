@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="theme-color" content="#090a0e" />
+    <meta
+      name="description"
+      content="一间被台灯照亮的复古卧室，水母在半空中缓慢呼吸。"
+    />
+    <title>夜航卧室</title>
+    <style>
+      :root {
+  color-scheme: dark;
+  --ink: #f1e8da;
+  --muted: rgba(241, 232, 218, 0.56);
+  --line: rgba(240, 220, 190, 0.2);
+  --glass: rgba(14, 14, 18, 0.48);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #090a0e;
+}
+
+body {
+  font-family: "Avenir Next", "Helvetica Neue", "PingFang SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 38%, #17131a 0%, #08090d 66%),
+    #08090d;
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+  outline: none;
+}
+
+#scene.is-grabbing {
+  cursor: grabbing;
+}
+
+.vignette,
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.vignette {
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(5, 5, 8, 0.42), transparent 18%, transparent 76%, rgba(4, 4, 7, 0.7)),
+    radial-gradient(ellipse at center, transparent 48%, rgba(4, 4, 7, 0.5) 112%);
+}
+
+.grain {
+  z-index: 3;
+  opacity: 0.11;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.87' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+.topbar {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding:
+    max(18px, env(safe-area-inset-top))
+    max(18px, calc(env(safe-area-inset-right) + 8px))
+    0
+    max(20px, calc(env(safe-area-inset-left) + 10px));
+  pointer-events: none;
+}
+
+.reset {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--glass);
+  color: var(--ink);
+  font: 22px/1 "Avenir Next", sans-serif;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.reset:hover {
+  border-color: rgba(205, 241, 255, 0.55);
+  background: rgba(26, 26, 31, 0.68);
+}
+
+.reset:active {
+  transform: rotate(-28deg) scale(0.92);
+}
+
+.reset:focus-visible {
+  outline: 2px solid #cbeeff;
+  outline-offset: 3px;
+}
+
+.loading,
+.fallback {
+  position: absolute;
+  z-index: 9;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: rgba(240, 241, 247, 0.78);
+  background: #090a0e;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  transition:
+    opacity 800ms ease,
+    visibility 800ms ease;
+}
+
+.loading.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-orb {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(191, 237, 255, 0.3);
+  border-top-color: #f9a7da;
+  border-radius: 50%;
+  box-shadow:
+    0 0 22px rgba(127, 221, 255, 0.18),
+    inset 0 0 18px rgba(250, 148, 222, 0.14);
+  animation: orbit 1.4s linear infinite;
+}
+
+.fallback {
+  padding: 28px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: 1.7;
+}
+
+.fallback[hidden] {
+  display: none;
+}
+
+.fallback p {
+  max-width: 360px;
+  margin: 0;
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .reset {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-height: 560px) {
+  .topbar {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-orb {
+    animation-duration: 3s;
+  }
+
+  .reset {
+    transition: none;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="scene" aria-label="可拖拽旋转、双指缩放的水母卧室三维场景"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <button id="reset" class="reset" type="button" aria-label="重置水母" title="重置水母">
+          <span aria-hidden="true">↺</span>
+        </button>
+      </header>
+
+      <div id="loading" class="loading" aria-live="polite">
+        <span class="loading-orb" aria-hidden="true"></span>
+        <span>正在唤醒房间</span>
+      </div>
+
+      <div id="fallback" class="fallback" hidden>
+        <p>当前浏览器无法启动 WebGL。请使用最新版 Safari、Chrome 或 Edge 打开。</p>
+      </div>
+      <noscript>
+        <div class="fallback">
+          <p>需要启用 JavaScript 才能进入三维房间。</p>
+        </div>
+      </noscript>
+    </main>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>
